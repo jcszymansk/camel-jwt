@@ -104,6 +104,38 @@ public class JwtNoneTest extends CamelTestSupport {
 
         mockResult.assertIsSatisfied();
     }
+
+    // In >90% of cases I want to get rid of the source header as soon as I've used it
+    // so why not make it the default behavior?
+    @Test
+    public void testNoneSignClearHeader() throws Exception {
+        final String JWT_URI = "jwt:none:Create?reallyWantNone=true&source=JwtClaims";
+
+        mockResult.expectedHeaderReceived("JwtClaims", null);
+
+        template.send("direct://test", exchange -> {
+            exchange.getIn().setHeader("JwtClaims", unsignedBody);
+            exchange.setProperty("JWT_URI", JWT_URI);
+        });
+
+        mockResult.assertIsSatisfied();
+    }
+
+    // but I can still keep it if I want to
+    @Test
+    public void testNoneSignRetainSourceHeader() throws Exception {
+        final String JWT_URI = "jwt:none:Create?reallyWantNone=true&source=JwtClaims&retainSource=true";
+
+        mockResult.expectedHeaderReceived("JwtClaims", unsignedBody);
+
+        template.send("direct://test", exchange -> {
+            exchange.getIn().setHeader("JwtClaims", unsignedBody);
+            exchange.setProperty("JWT_URI", JWT_URI);
+        });
+
+        mockResult.assertIsSatisfied();
+    }
+
     @Test
     public void testNoneVerify() throws Exception {
         final String JWT_URI = "jwt:none:Decode?reallyWantNone=true";
