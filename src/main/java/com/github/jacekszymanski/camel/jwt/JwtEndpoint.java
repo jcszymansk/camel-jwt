@@ -27,79 +27,79 @@ import java.util.concurrent.ExecutorService;
     label = "security",
     category = {Category.SECURITY})
 public class JwtEndpoint extends DefaultEndpoint {
-    @UriPath @Metadata(required = true, description = "Algorithm to use for signing/verifying JWT tokens.\n" +
-        "Supported algorithms are: HS256 and none (the processor will throw and exception if none is specified" +
-        "and the option reallyWantNone is not set to true).\n")
-    @Getter @Setter
-    private JwtAlgorithm algorithm;
+  @UriPath @Metadata(required = true, description = "Algorithm to use for signing/verifying JWT tokens.\n" +
+      "Supported algorithms are: HS256 and none (the processor will throw and exception if none is specified" +
+      "and the option reallyWantNone is not set to true).\n")
+  @Getter @Setter
+  private JwtAlgorithm algorithm;
 
-    @UriPath @Metadata(required = true, description = "Operation: Create or Decode," +
-        "create will sign and encode a JWT token, decode will verify and decode a JWT token.\n" +
-        "\n" +
-        "Claims, unless otherwise specified are taken from/put into the message body.\n")
-    @Getter @Setter
-    private JwtOperation operation;
+  @UriPath @Metadata(required = true, description = "Operation: Create or Decode," +
+      "create will sign and encode a JWT token, decode will verify and decode a JWT token.\n" +
+      "\n" +
+      "Claims, unless otherwise specified are taken from/put into the message body.\n")
+  @Getter @Setter
+  private JwtOperation operation;
 
-    @UriParam(defaultValue = "false",
-        description = "If set to true, the processor will allow the use of the none algorithm.\n" +
-        "This is for testing purposes only as it does not provide any security.\n")
-    @Getter @Setter
-    private boolean reallyWantNone = false;
+  @UriParam(defaultValue = "false",
+      description = "If set to true, the processor will allow the use of the none algorithm.\n" +
+          "This is for testing purposes only as it does not provide any security.\n")
+  @Getter @Setter
+  private boolean reallyWantNone = false;
 
-    @UriParam(description = "Location of the secret key to sign tokens.")
-    @Getter
-    private String privateKeyLocation;
+  @UriParam(description = "Location of the secret key to sign tokens.")
+  @Getter
+  private String privateKeyLocation;
 
-    @UriParam(description = "Name of the header (or, if starting with %, exchange property) containing " +
-        "the JWT payload.")
-    @Getter @Setter
-    private String source;
+  @UriParam(description = "Name of the header (or, if starting with %, exchange property) containing " +
+      "the JWT payload.")
+  @Getter @Setter
+  private String source;
 
-    @UriParam(description = "Name of the header (or, if starting with %, exchange property) to put " +
-        "the signed JWT token/decoded JWT payload.")
-    @Getter @Setter
-    private String target;
+  @UriParam(description = "Name of the header (or, if starting with %, exchange property) to put " +
+      "the signed JWT token/decoded JWT payload.")
+  @Getter @Setter
+  private String target;
 
-    @UriParam(defaultValue = "false",
-        description = "If set to true, the processor will retain the source in the header/property. " +
-            "(Body is always retained.)\n")
-    @Getter @Setter
-    private boolean retainSource = false;
+  @UriParam(defaultValue = "false",
+      description = "If set to true, the processor will retain the source in the header/property. " +
+          "(Body is always retained.)\n")
+  @Getter @Setter
+  private boolean retainSource = false;
 
-    public JwtEndpoint() {
+  public JwtEndpoint() {
+  }
+
+  public JwtEndpoint(String uri, JwtComponent component) {
+    super(uri, component);
+  }
+
+  public Producer createProducer() throws Exception {
+    if (algorithm == JwtAlgorithm.none && !reallyWantNone) {
+      throw new IllegalArgumentException("Algorithm none is not allowed, set reallyWantNone to true to allow it.");
     }
+    return new JwtProducer(this);
+  }
 
-    public JwtEndpoint(String uri, JwtComponent component) {
-        super(uri, component);
-    }
+  public Consumer createConsumer(Processor processor) throws Exception {
+    throw new UnsupportedOperationException("Consumer not supported");
+  }
 
-    public Producer createProducer() throws Exception {
-        if (algorithm == JwtAlgorithm.none && !reallyWantNone) {
-            throw new IllegalArgumentException("Algorithm none is not allowed, set reallyWantNone to true to allow it.");
-        }
-        return new JwtProducer(this);
-    }
+  public ExecutorService createExecutor() {
+    // TODO: Delete me when you implemented your custom component
+    return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "JwtConsumer");
+  }
 
-    public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Consumer not supported");
+  public void setSecretKeyLocation(final String secretKeyLocation) {
+    // check that this is a resource path, refuse if it's not for fear that the user has supplied a key
+    // TODO: better check that the resource is a local one
+    if (!isValidUri(secretKeyLocation)) {
+      throw new IllegalArgumentException("Secret key location must be a non-http resource path, not a key");
     }
+    this.privateKeyLocation = secretKeyLocation;
+  }
 
-    public ExecutorService createExecutor() {
-        // TODO: Delete me when you implemented your custom component
-        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "JwtConsumer");
-    }
-
-    public void setSecretKeyLocation(final String secretKeyLocation) {
-        // check that this is a resource path, refuse if it's not for fear that the user has supplied a key
-        // TODO: better check that the resource is a local one
-        if (!isValidUri(secretKeyLocation)) {
-            throw new IllegalArgumentException("Secret key location must be a non-http resource path, not a key");
-        }
-        this.privateKeyLocation = secretKeyLocation;
-    }
-
-    private static boolean isValidUri(final String uri) {
-        return ResourceHelper.isClasspathUri(uri) ||
-            (ResourceHelper.hasScheme(uri) && !ResourceHelper.isHttpUri(uri));
-    }
+  private static boolean isValidUri(final String uri) {
+    return ResourceHelper.isClasspathUri(uri) ||
+        (ResourceHelper.hasScheme(uri) && !ResourceHelper.isHttpUri(uri));
+  }
 }
