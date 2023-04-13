@@ -1,5 +1,7 @@
 package com.github.jacekszymanski.camel.jwt;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -13,17 +15,35 @@ import org.apache.camel.spi.UriPath;
 import java.util.concurrent.ExecutorService;
 
 /**
- * Jwt component which does bla bla.
+ * Encode and sign or verify and decode JWT tokens
  *
- * TODO: Update one line description above what the component does.
  */
-@UriEndpoint(firstVersion = "1.0-SNAPSHOT", scheme = "jwt", title = "Jwt", syntax="jwt:name",
-             category = {Category.JAVA})
+@UriEndpoint(firstVersion = "1.0-SNAPSHOT",
+    scheme = "jwt",
+    title = "Jwt",
+    syntax = "jwt:algorithm:operation",
+    producerOnly = true,
+    label = "security",
+    category = {Category.SECURITY})
 public class JwtEndpoint extends DefaultEndpoint {
-    @UriPath @Metadata(required = true)
-    private String name;
-    @UriParam(defaultValue = "10")
-    private int option = 10;
+    @UriPath @Metadata(required = true, description = "Algorithm to use for signing/verifying JWT tokens.\n" +
+        "Supported algorithms are: HS256 and none (the processor will throw and exception if none is specified" +
+        "and the option reallyWantNone is not set to true).\n")
+    @Getter @Setter
+    private JwtAlgorithm algorithm;
+
+    @UriPath @Metadata(required = true, description = "Operation: Create or Decode," +
+        "create will sign and encode a JWT token, decode will verify and decode a JWT token.\n" +
+        "\n" +
+        "Claims, unless otherwise specified are taken from/put into the message body.\n")
+    @Getter @Setter
+    private JwtOperation operation;
+
+    @UriParam(defaultValue = "false",
+        description = "If set to true, the processor will allow the use of the none algorithm.\n" +
+        "This is for testing purposes only as it does not provide any security.\n")
+    @Getter @Setter
+    private boolean reallyWantNone = false;
 
     public JwtEndpoint() {
     }
@@ -38,28 +58,6 @@ public class JwtEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported");
-    }
-
-    /**
-     * Some description of this option, and what it does
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Some description of this option, and what it does
-     */
-    public void setOption(int option) {
-        this.option = option;
-    }
-
-    public int getOption() {
-        return option;
     }
 
     public ExecutorService createExecutor() {
