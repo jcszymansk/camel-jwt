@@ -182,6 +182,36 @@ public class JwtNoneTest extends CamelTestSupport {
 
   }
 
+  @Test
+  public void testNoneDecodeToHeader() throws Exception {
+    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&target=JwtClaims";
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setBody(signedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+    });
+
+    final Map<String, Object> signedMap =
+        new ObjectMapper().readValue(result.getIn().getHeader("JwtClaims", String.class), Map.class);
+
+    Assertions.assertEquals(unsignedMap, signedMap);
+  }
+
+  @Test
+  public void testNoneDecodeToProperty() throws Exception {
+    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&target=%JwtClaims";
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setBody(signedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+    });
+
+    final Map<String, Object> signedMap =
+        new ObjectMapper().readValue(result.getProperty("JwtClaims", String.class), Map.class);
+
+    Assertions.assertEquals(unsignedMap, signedMap);
+  }
+
   @Override
   protected RouteBuilder createRouteBuilder() throws Exception {
     return new RouteBuilder() {
