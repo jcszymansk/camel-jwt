@@ -8,6 +8,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.assertj.core.api.Assertions;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
@@ -18,15 +19,18 @@ public class JwtNoneTest extends CamelTestSupport {
 
     private static final String UNSIGNED = "classpath:unsigned.txt";
     private static final String SIGNED_NONE = "classpath:signed.none.txt";
+    private String unsignedBody;
+    private String signedBody;
+
+    @Before
+    public void setUp() throws Exception {
+        unsignedBody = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
+        signedBody = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_NONE)).trim();
+    }
 
     @Test
     public void testNoneSign() throws Exception {
         final String JWT_URI = "jwt:none:Create?reallyWantNone=true";
-
-        final String unsignedBody =
-            IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
-        final String signedBody =
-            IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_NONE)).trim();
 
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(signedBody);
@@ -42,12 +46,7 @@ public class JwtNoneTest extends CamelTestSupport {
     @Test
     public void testNoneVerify() throws Exception {
         final String JWT_URI = "jwt:none:Decode?reallyWantNone=true";
-
-        final String signedBody =
-            IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_NONE));
-        final String unsignedBody =
-            IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
-
+        
         final Map<String, Object> unsignedMap = new ObjectMapper().readValue(unsignedBody, Map.class);
 
         final MockEndpoint mock = getMockEndpoint("mock:result");
