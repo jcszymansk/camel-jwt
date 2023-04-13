@@ -19,7 +19,7 @@ public class KeyUtil {
     // a key *must* be provided as a resource path, providing bytes/whatever in a header or uri is
     // not supported (it's a security nightmare)
     final String privateKeyLocation =
-        exchange.getIn().getHeader(JwtConstants.JWT_PRIVATE_KEY_LOCATION, endpoint.getPrivateKeyLocation(), String.class);
+        exchange.getProperty(JwtConstants.JWT_PRIVATE_KEY_LOCATION, endpoint.getPrivateKeyLocation(), String.class);
 
     if (privateKeyLocation == null) {
       if (!endpoint.getAlgorithm().equals(JwtAlgorithm.none)) {
