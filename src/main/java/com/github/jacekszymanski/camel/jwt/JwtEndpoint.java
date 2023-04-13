@@ -11,6 +11,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.ResourceHelper;
 
 import java.util.concurrent.ExecutorService;
 
@@ -45,6 +46,10 @@ public class JwtEndpoint extends DefaultEndpoint {
     @Getter @Setter
     private boolean reallyWantNone = false;
 
+    @UriParam(description = "Location of the secret key to sign tokens.")
+    @Getter
+    private String privateKeyLocation;
+
     public JwtEndpoint() {
     }
 
@@ -53,6 +58,9 @@ public class JwtEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
+        if (algorithm == JwtAlgorithm.None && !reallyWantNone) {
+            throw new IllegalArgumentException("Algorithm none is not allowed, set reallyWantNone to true to allow it.");
+        }
         return new JwtProducer(this);
     }
 
@@ -63,5 +71,19 @@ public class JwtEndpoint extends DefaultEndpoint {
     public ExecutorService createExecutor() {
         // TODO: Delete me when you implemented your custom component
         return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "JwtConsumer");
+    }
+
+    public void setSecretKeyLocation(final String secretKeyLocation) {
+        // check that this is a resource path, refuse if it's not for fear that the user has supplied a key
+        // TODO: better check that the resource is a local one
+        if (!isValidUri(secretKeyLocation)) {
+            throw new IllegalArgumentException("Secret key location must be a non-http resource path, not a key");
+        }
+        this.privateKeyLocation = secretKeyLocation;
+    }
+
+    private static boolean isValidUri(final String uri) {
+        return ResourceHelper.isClasspathUri(uri) ||
+            (ResourceHelper.hasScheme(uri) && !ResourceHelper.isHttpUri(uri));
     }
 }
