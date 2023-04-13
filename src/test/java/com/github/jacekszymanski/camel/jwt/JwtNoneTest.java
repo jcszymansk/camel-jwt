@@ -137,7 +137,7 @@ public class JwtNoneTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoneVerify() throws Exception {
+    public void testNoneDecode() throws Exception {
         final String JWT_URI = "jwt:none:Decode?reallyWantNone=true";
 
         final Exchange result = template.send("direct://test", exchange -> {
