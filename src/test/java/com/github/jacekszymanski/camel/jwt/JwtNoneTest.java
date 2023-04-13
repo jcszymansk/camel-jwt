@@ -5,11 +5,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class JwtNoneTest extends CamelTestSupport {
   private Map<String, Object> unsignedMap;
   private MockEndpoint mockResult;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     super.setUp();
     unsignedBody = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
@@ -148,7 +148,7 @@ public class JwtNoneTest extends CamelTestSupport {
     final Map<String, Object> signedMap =
         new ObjectMapper().readValue(result.getIn().getBody(String.class), Map.class);
 
-    Assertions.assertThat(signedMap).isEqualTo(unsignedMap);
+    Assertions.assertEquals(unsignedMap, signedMap);
   }
 
   @Test
@@ -163,7 +163,7 @@ public class JwtNoneTest extends CamelTestSupport {
     final Map<String, Object> signedMap =
         new ObjectMapper().readValue(result.getIn().getBody(String.class), Map.class);
 
-    Assertions.assertThat(signedMap).isEqualTo(unsignedMap);
+    Assertions.assertEquals(unsignedMap, signedMap);
   }
 
   @Test
@@ -178,7 +178,7 @@ public class JwtNoneTest extends CamelTestSupport {
     final Map<String, Object> signedMap =
         new ObjectMapper().readValue(result.getIn().getBody(String.class), Map.class);
 
-    Assertions.assertThat(signedMap).isEqualTo(unsignedMap);
+    Assertions.assertEquals(unsignedMap, signedMap);
 
   }
 
