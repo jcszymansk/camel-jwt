@@ -50,6 +50,11 @@ public class JwtEndpoint extends DefaultEndpoint {
     @Getter
     private String privateKeyLocation;
 
+    @UriParam(description = "Name of the header (or, if starting with %, exchange property) containing " +
+        "the JWT payload.")
+    @Getter @Setter
+    private String source;
+
     public JwtEndpoint() {
     }
 
