@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutorService;
     title = "Jwt",
     syntax = "jwt:algorithm:operation",
     producerOnly = true,
-    label = "security",
     category = {Category.SECURITY})
 public class JwtEndpoint extends DefaultEndpoint {
   @UriPath @Metadata(required = true, description = "Algorithm to use for signing/verifying JWT tokens.\n" +
@@ -89,13 +88,13 @@ public class JwtEndpoint extends DefaultEndpoint {
     return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "JwtConsumer");
   }
 
-  public void setSecretKeyLocation(final String secretKeyLocation) {
+  public void setPrivateKeyLocation(final String privateKeyLocation) {
     // check that this is a resource path, refuse if it's not for fear that the user has supplied a key
     // TODO: better check that the resource is a local one
-    if (!isValidUri(secretKeyLocation)) {
+    if (!isValidUri(privateKeyLocation)) {
       throw new IllegalArgumentException("Secret key location must be a non-http resource path, not a key");
     }
-    this.privateKeyLocation = secretKeyLocation;
+    this.privateKeyLocation = privateKeyLocation;
   }
 
   private static boolean isValidUri(final String uri) {
