@@ -92,6 +92,19 @@ public class JwtNoneTest extends CamelTestSupport {
     }
 
     @Test
+    public void testNoneSignToProperty() throws Exception {
+        final String JWT_URI = "jwt:none:Create?reallyWantNone=true&target=%JwtToken";
+
+        mockResult.expectedPropertyReceived("JwtToken", signedBody);
+
+        template.send("direct://test", exchange -> {
+            exchange.getIn().setBody(unsignedBody);
+            exchange.setProperty("JWT_URI", JWT_URI);
+        });
+
+        mockResult.assertIsSatisfied();
+    }
+    @Test
     public void testNoneVerify() throws Exception {
         final String JWT_URI = "jwt:none:Decode?reallyWantNone=true";
 
