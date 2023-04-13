@@ -37,9 +37,7 @@ public class JwtEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer consumer = new JwtConsumer(this, processor);
-        configureConsumer(consumer);
-        return consumer;
+        throw new UnsupportedOperationException("Consumer not supported");
     }
 
     /**
