@@ -70,7 +70,7 @@
     <defaultGoal>install</defaultGoal>
 
     <plugins>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -86,7 +86,7 @@
           </annotationProcessorPaths>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
