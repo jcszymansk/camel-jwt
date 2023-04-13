@@ -60,6 +60,12 @@ public class JwtEndpoint extends DefaultEndpoint {
     @Getter @Setter
     private String target;
 
+    @UriParam(defaultValue = "false",
+        description = "If set to true, the processor will retain the source in the header/property. " +
+            "(Body is always retained.)\n")
+    @Getter @Setter
+    private boolean retainSource = false;
+
     public JwtEndpoint() {
     }
 

@@ -34,7 +34,7 @@ public class JwtCreateProcessor implements Processor {
     // remove source only after the exchange is processed, so that in case of an error
     // it is still available for debugging
     final String sourceLocation = endpoint.getSource();
-    if (sourceLocation != null) {
+    if (sourceLocation != null && !endpoint.isRetainSource()) {
       removeSource(sourceLocation, exchange);
     }
 
