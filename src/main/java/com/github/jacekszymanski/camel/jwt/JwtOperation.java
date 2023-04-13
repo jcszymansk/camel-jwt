@@ -19,7 +19,7 @@ public enum JwtOperation {
    */
   Decode {
     public Processor getProcessor(Endpoint endpoint) {
-      return new JwtDecodeProcessor(endpoint);
+      return new JwtDecodeProcessor((JwtEndpoint) endpoint);
     }
   }
   ;
