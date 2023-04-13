@@ -15,7 +15,7 @@ public class JwtDecodeProcessor implements Processor {
 
   @Override
   public void process(Exchange exchange) throws Exception {
-    final String token = exchange.getIn().getBody(String.class);
+    final String token = getToken(endpoint, exchange);
 
     final JwtAlgorithm algorithm = endpoint.getAlgorithm();
 
@@ -31,5 +31,17 @@ public class JwtDecodeProcessor implements Processor {
     final JwtConsumer jwtConsumer = jwtConsumerBuilder.build();
 
     exchange.getIn().setBody(jwtConsumer.processToClaims(token).toJson());
+  }
+
+  private static String getToken(final JwtEndpoint endpoint, final Exchange exchange) {
+    final String sourceLocation = endpoint.getSource();
+
+    if (sourceLocation == null) {
+      return exchange.getIn().getBody(String.class);
+    } else if (sourceLocation.startsWith("%")) {
+      return exchange.getProperty(sourceLocation.substring(1), String.class);
+    } else {
+      return exchange.getIn().getHeader(sourceLocation, String.class);
+    }
   }
 }
