@@ -7,11 +7,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class JwtComponentTest extends CamelTestSupport {
+public class JwtNoneTest extends CamelTestSupport {
 
     private final EventBusHelper eventBusHelper = EventBusHelper.getInstance();
 
@@ -19,7 +15,7 @@ public class JwtComponentTest extends CamelTestSupport {
     private static final String SIGNED_NONE = "classpath:signed.none.txt";
 
     @Test
-    public void testJwt() throws Exception {
+    public void testNoneSign() throws Exception {
         final String unsignedBody =
             IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
         final String signedBody =
