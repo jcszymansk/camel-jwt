@@ -2,7 +2,9 @@ package com.github.jacekszymanski.camel.jwt;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 import java.util.Date;
@@ -13,38 +15,33 @@ public class JwtComponentTest extends CamelTestSupport {
 
     private final EventBusHelper eventBusHelper = EventBusHelper.getInstance();
 
+    private static final String UNSIGNED = "classpath:unsigned.txt";
+    private static final String SIGNED_NONE = "classpath:signed.none.txt";
+
     @Test
     public void testJwt() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(5);
+        final String unsignedBody =
+            IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
+        final String signedBody =
+            IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_NONE)).trim();
 
-        // Trigger events to subscribers
-        simulateEventTrigger();
+        final MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(signedBody);
 
-        mock.await();
+        template.sendBody("direct://test", unsignedBody);
+
+        mock.assertIsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jwt://foo")
-                  .to("jwt://bar")
+                from("direct://test")
+                  .to("jwt:none:Create?reallyWantNone=true")
                   .to("mock:result");
             }
         };
     }
 
-    private void simulateEventTrigger() {
-        final TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                final Date now = new Date();
-                // publish events to the event bus
-                eventBusHelper.publish(now);
-            }
-        };
-
-        new Timer().scheduleAtFixedRate(task, 1000L, 1000L);
-    }
 }
