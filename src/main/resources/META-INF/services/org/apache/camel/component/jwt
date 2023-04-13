@@ -1,1 +1,1 @@
-class=com.github.jacekszymanski.JwtComponent
+class=com.github.jacekszymanski.camel.jwt.JwtComponent

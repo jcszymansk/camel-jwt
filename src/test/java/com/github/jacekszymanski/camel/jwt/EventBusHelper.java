@@ -1,4 +1,4 @@
-package com.github.jacekszymanski;
+package com.github.jacekszymanski.camel.jwt;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

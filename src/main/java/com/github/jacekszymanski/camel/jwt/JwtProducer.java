@@ -1,4 +1,4 @@
-package com.github.jacekszymanski;
+package com.github.jacekszymanski.camel.jwt;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
