@@ -30,6 +30,14 @@ public class JwtCreateProcessor implements Processor {
     signature.setKey(KeyUtil.resolveKey(endpoint, exchange));
 
     putToken(endpoint, exchange, signature.getCompactSerialization());
+
+    // remove source only after the exchange is processed, so that in case of an error
+    // it is still available for debugging
+    final String sourceLocation = endpoint.getSource();
+    if (sourceLocation != null) {
+      removeSource(sourceLocation, exchange);
+    }
+
   }
 
   private static void putToken(final JwtEndpoint endpoint, final Exchange exchange, final String token) {
@@ -62,6 +70,14 @@ public class JwtCreateProcessor implements Processor {
     }
 
     return JwtClaims.parse(claims);
+  }
+
+  private static void removeSource(final String sourceLocation, final Exchange exchange) {
+    if (sourceLocation.startsWith("%")) {
+      exchange.removeProperty(sourceLocation.substring(1));
+    } else {
+      exchange.getIn().removeHeader(sourceLocation);
+    }
   }
 
 }
