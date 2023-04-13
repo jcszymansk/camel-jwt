@@ -16,8 +16,6 @@ import java.util.Map;
 
 public class JwtNoneTest extends CamelTestSupport {
 
-  private final EventBusHelper eventBusHelper = EventBusHelper.getInstance();
-
   private static final String UNSIGNED = "classpath:unsigned.txt";
   private static final String SIGNED_NONE = "classpath:signed.none.txt";
   private String unsignedBody;

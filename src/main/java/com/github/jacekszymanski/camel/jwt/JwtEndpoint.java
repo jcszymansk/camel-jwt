@@ -13,8 +13,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ResourceHelper;
 
-import java.util.concurrent.ExecutorService;
-
 /**
  * Encode and sign or verify and decode JWT tokens
  *
@@ -81,11 +79,6 @@ public class JwtEndpoint extends DefaultEndpoint {
 
   public Consumer createConsumer(Processor processor) throws Exception {
     throw new UnsupportedOperationException("Consumer not supported");
-  }
-
-  public ExecutorService createExecutor() {
-    // TODO: Delete me when you implemented your custom component
-    return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "JwtConsumer");
   }
 
   public void setPrivateKeyLocation(final String privateKeyLocation) {
