@@ -55,6 +55,11 @@ public class JwtEndpoint extends DefaultEndpoint {
     @Getter @Setter
     private String source;
 
+    @UriParam(description = "Name of the header (or, if starting with %, exchange property) to put " +
+        "the signed JWT token/decoded JWT payload.")
+    @Getter @Setter
+    private String target;
+
     public JwtEndpoint() {
     }
 

@@ -29,7 +29,19 @@ public class JwtCreateProcessor implements Processor {
     signature.setPayload(claims.toJson());
     signature.setKey(KeyUtil.resolveKey(endpoint, exchange));
 
-    exchange.getIn().setBody(signature.getCompactSerialization());
+    putToken(endpoint, exchange, signature.getCompactSerialization());
+  }
+
+  private static void putToken(final JwtEndpoint endpoint, final Exchange exchange, final String token) {
+    final String targetLocation = endpoint.getTarget();
+
+    if (targetLocation == null) {
+      exchange.getIn().setBody(token);
+    } else if (targetLocation.startsWith("%")) {
+      exchange.setProperty(targetLocation.substring(1), token);
+    } else {
+      exchange.getIn().setHeader(targetLocation, token);
+    }
   }
 
   private static JwtClaims getClaims(final JwtEndpoint endpoint, final Exchange exchange) throws InvalidJwtException {
