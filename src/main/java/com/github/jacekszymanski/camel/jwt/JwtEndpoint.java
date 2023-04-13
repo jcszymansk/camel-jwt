@@ -58,7 +58,7 @@ public class JwtEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        if (algorithm == JwtAlgorithm.None && !reallyWantNone) {
+        if (algorithm == JwtAlgorithm.none && !reallyWantNone) {
             throw new IllegalArgumentException("Algorithm none is not allowed, set reallyWantNone to true to allow it.");
         }
         return new JwtProducer(this);

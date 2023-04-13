@@ -9,7 +9,7 @@ public enum JwtAlgorithm {
   /**
    * No signature, for testing purposes only
    */
-  None(AlgorithmIdentifiers.NONE),
+  none(AlgorithmIdentifiers.NONE),
 
   /**
    * HMAC using SHA-256 hash algorithm

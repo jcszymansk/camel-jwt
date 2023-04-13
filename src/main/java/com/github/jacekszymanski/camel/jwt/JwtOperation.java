@@ -10,7 +10,7 @@ public enum JwtOperation {
    */
   Create {
     public Processor getProcessor(Endpoint endpoint) {
-      return new JwtCreateProcessor(endpoint);
+      return new JwtCreateProcessor((JwtEndpoint) endpoint);
     }
   },
 

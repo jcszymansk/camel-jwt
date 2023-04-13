@@ -6,6 +6,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ResourceHelper;
+import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.keys.HmacKey;
@@ -27,6 +28,10 @@ public class JwtCreateProcessor implements Processor {
     final JwtClaims claims = JwtClaims.parse(exchange.getIn().getBody(String.class));
     final JsonWebSignature signature = new JsonWebSignature();
     signature.setAlgorithmHeaderValue(endpoint.getAlgorithm().getIdentifier());
+    if (endpoint.isReallyWantNone()) {
+      signature.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
+    }
+    signature.setHeader("typ", "JWT");
     signature.setPayload(claims.toJson());
     signature.setKey(resolveKey(exchange));
 
@@ -41,8 +46,13 @@ public class JwtCreateProcessor implements Processor {
     // not supported (it's a security nightmare)
     final String privateKeyLocation =
         exchange.getIn().getHeader(JwtConstants.JWT_PRIVATE_KEY_LOCATION, endpoint.getPrivateKeyLocation(), String.class);
-    if (privateKeyLocation == null && !endpoint.getAlgorithm().equals(JwtAlgorithm.None)) {
-      throw new IllegalArgumentException("No key location provided");
+
+    if (privateKeyLocation == null) {
+      if (!endpoint.getAlgorithm().equals(JwtAlgorithm.none)) {
+        throw new IllegalArgumentException("No key location provided");
+      }
+
+      return null;
     }
 
     // TODO: cache the key

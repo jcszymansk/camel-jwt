@@ -10,7 +10,13 @@ import org.apache.camel.support.DefaultComponent;
 public class JwtComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new JwtEndpoint(uri, this);
+        JwtEndpoint endpoint = new JwtEndpoint(uri, this);
+        final String[] parts = remaining.split(":");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid endpoint uri: " + uri);
+        }
+        endpoint.setAlgorithm(JwtAlgorithm.valueOf(parts[0]));
+        endpoint.setOperation(JwtOperation.valueOf(parts[1]));
         setProperties(endpoint, parameters);
         return endpoint;
     }
