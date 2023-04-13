@@ -21,6 +21,8 @@ public class JwtNoneTest extends CamelTestSupport {
 
     @Test
     public void testNoneSign() throws Exception {
+        final String JWT_URI = "jwt:none:Create?reallyWantNone=true";
+
         final String unsignedBody =
             IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
         final String signedBody =
@@ -29,13 +31,18 @@ public class JwtNoneTest extends CamelTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(signedBody);
 
-        template.sendBody("direct://test", unsignedBody);
+        template.send("direct://test", exchange -> {
+            exchange.getIn().setBody(unsignedBody);
+            exchange.setProperty("JWT_URI", JWT_URI);
+        });
 
         mock.assertIsSatisfied();
     }
 
     @Test
     public void testNoneVerify() throws Exception {
+        final String JWT_URI = "jwt:none:Decode?reallyWantNone=true";
+
         final String signedBody =
             IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_NONE));
         final String unsignedBody =
@@ -45,16 +52,15 @@ public class JwtNoneTest extends CamelTestSupport {
 
         final MockEndpoint mock = getMockEndpoint("mock:result");
 
-        final Exchange result = template.send("direct://testDecode", exchange -> {
+        final Exchange result = template.send("direct://test", exchange -> {
             exchange.getIn().setBody(signedBody);
+            exchange.setProperty("JWT_URI", JWT_URI);
         });
 
         final Map<String, Object> signedMap =
             new ObjectMapper().readValue(result.getIn().getBody(String.class), Map.class);
 
         Assertions.assertThat(signedMap).isEqualTo(unsignedMap);
-
-
     }
 
     @Override
@@ -62,12 +68,9 @@ public class JwtNoneTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://test")
-                  .to("jwt:none:Create?reallyWantNone=true")
+                  .toD("${exchangeProperty.JWT_URI}")
                   .to("mock:result");
 
-                from("direct://testDecode")
-                  .to("jwt:none:Decode?reallyWantNone=true")
-                  .to("mock:result");
             }
         };
     }
