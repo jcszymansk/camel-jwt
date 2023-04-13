@@ -3,12 +3,14 @@ package com.github.jacekszymanski.camel.jwt;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
 import org.jose4j.keys.HmacKey;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Key;
+import java.util.Base64;
 
 public class KeyUtil {
   public static Key resolveKey(final JwtEndpoint endpoint, final Exchange exchange) throws IOException {
@@ -28,11 +30,11 @@ public class KeyUtil {
     }
 
     // TODO: cache the key
-    try (InputStream keyInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(ctx, privateKeyLocation)) {
-      final ByteArrayOutputStream keyBytes = new ByteArrayOutputStream();
-      keyBytes.writeBytes(keyInputStream.readAllBytes());
+    final String keyBase64 =
+        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(ctx, privateKeyLocation));
 
-      return new HmacKey(keyBytes.toByteArray());
-    }
+    final byte[] keyBytes = Base64.getDecoder().decode(keyBase64);
+
+    return new HmacKey(keyBytes);
   }
 }
