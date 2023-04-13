@@ -30,7 +30,7 @@ public class JwtDecodeProcessor implements Processor {
 
     final JwtConsumer jwtConsumer = jwtConsumerBuilder.build();
 
-    exchange.getIn().setBody(jwtConsumer.processToClaims(token).toJson());
+    putClaims(endpoint, exchange, jwtConsumer.processToClaims(token).toJson());
   }
 
   private static String getToken(final JwtEndpoint endpoint, final Exchange exchange) {
@@ -42,6 +42,18 @@ public class JwtDecodeProcessor implements Processor {
       return exchange.getProperty(sourceLocation.substring(1), String.class);
     } else {
       return exchange.getIn().getHeader(sourceLocation, String.class);
+    }
+  }
+
+  private static void putClaims(final JwtEndpoint endpoint, final Exchange exchange, final String claims) {
+    final String targetLocation = endpoint.getTarget();
+
+    if (targetLocation == null) {
+      exchange.getIn().setBody(claims);
+    } else if (targetLocation.startsWith("%")) {
+      exchange.setProperty(targetLocation.substring(1), claims);
+    } else {
+      exchange.getIn().setHeader(targetLocation, claims);
     }
   }
 }
