@@ -27,6 +27,7 @@ public class JwtNoneTest extends CamelTestSupport {
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         unsignedBody = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
         signedBody = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_NONE)).trim();
         unsignedMap = Collections.unmodifiableMap(new ObjectMapper().readValue(unsignedBody, Map.class));
