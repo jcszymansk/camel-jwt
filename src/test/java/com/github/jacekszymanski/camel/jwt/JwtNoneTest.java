@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class JwtNoneTest extends CamelTestSupport {
@@ -21,35 +22,34 @@ public class JwtNoneTest extends CamelTestSupport {
     private static final String SIGNED_NONE = "classpath:signed.none.txt";
     private String unsignedBody;
     private String signedBody;
+    private Map<String, Object> unsignedMap;
+    private MockEndpoint mockResult;
 
     @Before
     public void setUp() throws Exception {
         unsignedBody = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
         signedBody = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_NONE)).trim();
+        unsignedMap = Collections.unmodifiableMap(new ObjectMapper().readValue(unsignedBody, Map.class));
+        mockResult = getMockEndpoint("mock:result");
     }
 
     @Test
     public void testNoneSign() throws Exception {
         final String JWT_URI = "jwt:none:Create?reallyWantNone=true";
 
-        final MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived(signedBody);
+        mockResult.expectedBodiesReceived(signedBody);
 
         template.send("direct://test", exchange -> {
             exchange.getIn().setBody(unsignedBody);
             exchange.setProperty("JWT_URI", JWT_URI);
         });
 
-        mock.assertIsSatisfied();
+        mockResult.assertIsSatisfied();
     }
 
     @Test
     public void testNoneVerify() throws Exception {
         final String JWT_URI = "jwt:none:Decode?reallyWantNone=true";
-        
-        final Map<String, Object> unsignedMap = new ObjectMapper().readValue(unsignedBody, Map.class);
-
-        final MockEndpoint mock = getMockEndpoint("mock:result");
 
         final Exchange result = template.send("direct://test", exchange -> {
             exchange.getIn().setBody(signedBody);
