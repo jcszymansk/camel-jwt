@@ -15,7 +15,7 @@ public class JwtProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        System.out.println(exchange.getIn().getBody());
+        endpoint.getOperation().getProcessor(endpoint).process(exchange);
     }
 
 }
