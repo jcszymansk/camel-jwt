@@ -73,7 +73,7 @@ public class Util {
   }
 
   static boolean isValidUri(final String uri) {
-    return ResourceHelper.isClasspathUri(uri) ||
+    return uri.startsWith("classpath:") ||
         (ResourceHelper.hasScheme(uri) && !ResourceHelper.isHttpUri(uri));
   }
 }
