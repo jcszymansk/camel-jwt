@@ -63,7 +63,7 @@ public class JwtNoneTest extends CamelTestSupport {
 
   @Test
   public void testNoneSignFromProperty() throws Exception {
-    final String JWT_URI = "jwt:none:Create?reallyWantNone=true&source=%JwtClaims";
+    final String JWT_URI = "jwt:none:Create?reallyWantNone=true&source=.JwtClaims";
 
     mockResult.expectedBodiesReceived(signedBody);
 
@@ -91,7 +91,7 @@ public class JwtNoneTest extends CamelTestSupport {
 
   @Test
   public void testNoneSignToProperty() throws Exception {
-    final String JWT_URI = "jwt:none:Create?reallyWantNone=true&target=%JwtToken";
+    final String JWT_URI = "jwt:none:Create?reallyWantNone=true&target=.JwtToken";
 
     mockResult.expectedPropertyReceived("JwtToken", signedBody);
 
@@ -166,7 +166,7 @@ public class JwtNoneTest extends CamelTestSupport {
 
   @Test
   public void testNoneDecodeFromProperty() throws Exception {
-    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&source=%JwtToken";
+    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&source=.JwtToken";
 
     final Exchange result = template.send("direct://test", exchange -> {
       exchange.setProperty("JwtToken", signedBody);
@@ -197,7 +197,7 @@ public class JwtNoneTest extends CamelTestSupport {
 
   @Test
   public void testNoneDecodeToProperty() throws Exception {
-    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&target=%JwtClaims";
+    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&target=.JwtClaims";
 
     final Exchange result = template.send("direct://test", exchange -> {
       exchange.getIn().setBody(signedBody);

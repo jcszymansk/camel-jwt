@@ -41,7 +41,7 @@ public class Util {
 
     if (sourceLocation == null) {
       return exchange.getIn().getBody(String.class);
-    } else if (sourceLocation.startsWith("%")) {
+    } else if (sourceLocation.startsWith(".")) {
       return exchange.getProperty(sourceLocation.substring(1), String.class);
     } else {
       return exchange.getIn().getHeader(sourceLocation, String.class);
@@ -53,7 +53,7 @@ public class Util {
 
     if (targetLocation == null) {
       exchange.getIn().setBody(claims);
-    } else if (targetLocation.startsWith("%")) {
+    } else if (targetLocation.startsWith(".")) {
       exchange.setProperty(targetLocation.substring(1), claims);
     } else {
       exchange.getIn().setHeader(targetLocation, claims);
@@ -61,7 +61,7 @@ public class Util {
   }
 
   static void removeSource(final String sourceLocation, final Exchange exchange) {
-    if (sourceLocation.startsWith("~")) {
+    if (sourceLocation.startsWith(".")) {
       exchange.removeProperty(sourceLocation.substring(1));
     } else {
       exchange.getIn().removeHeader(sourceLocation);

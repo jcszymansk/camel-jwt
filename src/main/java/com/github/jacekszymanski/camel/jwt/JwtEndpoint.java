@@ -47,12 +47,12 @@ public class JwtEndpoint extends DefaultEndpoint {
   @Getter
   private String privateKeyLocation;
 
-  @UriParam(description = "Name of the header (or, if starting with %, exchange property) containing " +
+  @UriParam(description = "Name of the header (or, if starting with a dot, exchange property) containing " +
       "the JWT payload.")
   @Getter @Setter
   private String source;
 
-  @UriParam(description = "Name of the header (or, if starting with %, exchange property) to put " +
+  @UriParam(description = "Name of the header (or, if starting with a dot, exchange property) to put " +
       "the signed JWT token/decoded JWT payload.")
   @Getter @Setter
   private String target;
