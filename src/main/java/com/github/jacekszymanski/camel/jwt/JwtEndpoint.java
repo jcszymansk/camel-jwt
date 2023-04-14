@@ -73,6 +73,9 @@ public class JwtEndpoint extends DefaultEndpoint {
     if (algorithm == JwtAlgorithm.none && !reallyWantNone) {
       throw new IllegalArgumentException("Algorithm none is not allowed, set reallyWantNone to true to allow it.");
     }
+    if (retainSource && source == null) {
+      throw new IllegalArgumentException("If retainSource is set to true, source must be set.");
+    }
     return new JwtProducer(this);
   }
 
