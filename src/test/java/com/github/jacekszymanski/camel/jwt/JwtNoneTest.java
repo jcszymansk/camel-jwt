@@ -224,6 +224,20 @@ public class JwtNoneTest extends CamelTestSupport {
     mockResult.assertIsSatisfied();
   }
 
+  @Test
+  public void testNodeDecodeRetainSourceHeader() throws Exception {
+    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&source=JwtToken&retainSource=true";
+
+    mockResult.expectedHeaderReceived("JwtToken", signedBody);
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setHeader("JwtToken", signedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+    });
+
+    mockResult.assertIsSatisfied();
+  }
+
   @Override
   protected RouteBuilder createRouteBuilder() throws Exception {
     return new RouteBuilder() {
