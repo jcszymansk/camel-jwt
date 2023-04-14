@@ -2,35 +2,24 @@ package com.github.jacekszymanski.camel.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.Map;
 
-public class JwtNoneTest extends CamelTestSupport {
+public class JwtNoneTest extends JwtTestBase {
 
-  private static final String UNSIGNED = "classpath:unsigned.txt";
   private static final String SIGNED_NONE = "classpath:signed.none.txt";
-  private String unsignedBody;
   private String signedBody;
-  private Map<String, Object> unsignedMap;
-  private MockEndpoint mockResult;
 
   @BeforeEach
   public void setUp() throws Exception {
     super.setUp();
-    unsignedBody = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
     signedBody =
         IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_NONE)).trim();
-    unsignedMap = Collections.unmodifiableMap(new ObjectMapper().readValue(unsignedBody, Map.class));
-    mockResult = getMockEndpoint("mock:result");
   }
 
   @Test
@@ -216,7 +205,7 @@ public class JwtNoneTest extends CamelTestSupport {
 
     mockResult.expectedHeaderReceived("JwtToken", null);
 
-    final Exchange result = template.send("direct://test", exchange -> {
+    template.send("direct://test", exchange -> {
       exchange.getIn().setHeader("JwtToken", signedBody);
       exchange.setProperty("JWT_URI", JWT_URI);
     });
@@ -230,7 +219,7 @@ public class JwtNoneTest extends CamelTestSupport {
 
     mockResult.expectedHeaderReceived("JwtToken", signedBody);
 
-    final Exchange result = template.send("direct://test", exchange -> {
+    template.send("direct://test", exchange -> {
       exchange.getIn().setHeader("JwtToken", signedBody);
       exchange.setProperty("JWT_URI", JWT_URI);
     });
@@ -248,18 +237,6 @@ public class JwtNoneTest extends CamelTestSupport {
     });
 
     Assertions.assertNotNull(result.getException(IllegalArgumentException.class));
-  }
-
-  @Override
-  protected RouteBuilder createRouteBuilder() throws Exception {
-    return new RouteBuilder() {
-      public void configure() {
-        from("direct://test")
-            .toD("${exchangeProperty.JWT_URI}")
-            .to("mock:result");
-
-      }
-    };
   }
 
 }
