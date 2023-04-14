@@ -27,4 +27,5 @@ such as:
 
 But, within its limits, this component should be usable.
 
-This component is written for camel 3.20.
+This component is written for camel 3.20. For the actual work it uses
+the [jose4j](https://bitbucket.org/b_c/jose4j/wiki/Home) library.
