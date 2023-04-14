@@ -67,4 +67,9 @@ public class Util {
       exchange.getIn().removeHeader(sourceLocation);
     }
   }
+
+  static boolean isValidUri(final String uri) {
+    return ResourceHelper.isClasspathUri(uri) ||
+        (ResourceHelper.hasScheme(uri) && !ResourceHelper.isHttpUri(uri));
+  }
 }

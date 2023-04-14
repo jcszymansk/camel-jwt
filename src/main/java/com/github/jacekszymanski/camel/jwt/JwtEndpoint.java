@@ -11,7 +11,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.ResourceHelper;
 
 /**
  * Encode and sign or verify and decode JWT tokens
@@ -84,14 +83,10 @@ public class JwtEndpoint extends DefaultEndpoint {
   public void setPrivateKeyLocation(final String privateKeyLocation) {
     // check that this is a resource path, refuse if it's not for fear that the user has supplied a key
     // TODO: better check that the resource is a local one
-    if (!isValidUri(privateKeyLocation)) {
+    if (!Util.isValidUri(privateKeyLocation)) {
       throw new IllegalArgumentException("Secret key location must be a non-http resource path, not a key");
     }
     this.privateKeyLocation = privateKeyLocation;
   }
 
-  private static boolean isValidUri(final String uri) {
-    return ResourceHelper.isClasspathUri(uri) ||
-        (ResourceHelper.hasScheme(uri) && !ResourceHelper.isHttpUri(uri));
-  }
 }
