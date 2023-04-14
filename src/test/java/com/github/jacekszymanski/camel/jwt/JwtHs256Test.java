@@ -78,6 +78,34 @@ public class JwtHs256Test extends CamelTestSupport {
     Assertions.assertNotNull(result.getProperty(Exchange.EXCEPTION_CAUGHT, InvalidJwtSignatureException.class));
   }
 
+  @Test
+  public void testHs256SignKeyInProperty() throws Exception {
+    final String JWT_URI = "jwt:HS256:Create";
+
+    mockResult.expectedBodiesReceived(signedBody);
+
+    template.send("direct://test", exchange -> {
+      exchange.getIn().setBody(unsignedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+      exchange.setProperty(JwtConstants.JWT_PRIVATE_KEY_LOCATION, KEY_HS256);
+    });
+
+    mockResult.assertIsSatisfied();
+  }
+
+  @Test
+  public void testHs256ExceptionOnRawKeyInProperty() throws Exception {
+    final String JWT_URI = "jwt:HS256:Create";
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setBody(unsignedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+      exchange.setProperty(JwtConstants.JWT_PRIVATE_KEY_LOCATION,
+          IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, KEY_HS256)));
+    });
+
+    Assertions.assertNotNull(result.getProperty(Exchange.EXCEPTION_CAUGHT, IllegalArgumentException.class));
+  }
   // TODO refactor with JwtNoneTest
   @Override
   protected RouteBuilder createRouteBuilder() throws Exception {
