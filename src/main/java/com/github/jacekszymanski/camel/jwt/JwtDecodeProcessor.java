@@ -14,7 +14,7 @@ public class JwtDecodeProcessor implements Processor {
 
   @Override
   public void process(Exchange exchange) throws Exception {
-    final String token = getToken(endpoint, exchange);
+    final String token = Util.getToken(endpoint, exchange);
 
     final JwtAlgorithm algorithm = endpoint.getAlgorithm();
 
@@ -29,43 +29,10 @@ public class JwtDecodeProcessor implements Processor {
 
     final JwtConsumer jwtConsumer = jwtConsumerBuilder.build();
 
-    putClaims(endpoint, exchange, jwtConsumer.processToClaims(token).toJson());
+    Util.putClaims(endpoint, exchange, jwtConsumer.processToClaims(token).toJson());
 
     if (endpoint.getSource() != null && !endpoint.isRetainSource()) {
-      removeSource(endpoint.getSource(), exchange);
-    }
-  }
-
-  private static String getToken(final JwtEndpoint endpoint, final Exchange exchange) {
-    final String sourceLocation = endpoint.getSource();
-
-    if (sourceLocation == null) {
-      return exchange.getIn().getBody(String.class);
-    } else if (sourceLocation.startsWith("%")) {
-      return exchange.getProperty(sourceLocation.substring(1), String.class);
-    } else {
-      return exchange.getIn().getHeader(sourceLocation, String.class);
-    }
-  }
-
-  private static void putClaims(final JwtEndpoint endpoint, final Exchange exchange, final String claims) {
-    final String targetLocation = endpoint.getTarget();
-
-    if (targetLocation == null) {
-      exchange.getIn().setBody(claims);
-    } else if (targetLocation.startsWith("%")) {
-      exchange.setProperty(targetLocation.substring(1), claims);
-    } else {
-      exchange.getIn().setHeader(targetLocation, claims);
-    }
-  }
-
-  // TODO refactor with JwtCreateProcessor
-  private static void removeSource(final String sourceLocation, final Exchange exchange) {
-    if (sourceLocation.startsWith("~")) {
-      exchange.removeProperty(sourceLocation.substring(1));
-    } else {
-      exchange.getIn().removeHeader(sourceLocation);
+      Util.removeSource(endpoint.getSource(), exchange);
     }
   }
 

@@ -35,4 +35,37 @@ public class Util {
 
     return new HmacKey(keyBytes);
   }
+
+  static String getToken(final JwtEndpoint endpoint, final Exchange exchange) {
+    final String sourceLocation = endpoint.getSource();
+
+    if (sourceLocation == null) {
+      return exchange.getIn().getBody(String.class);
+    } else if (sourceLocation.startsWith("%")) {
+      return exchange.getProperty(sourceLocation.substring(1), String.class);
+    } else {
+      return exchange.getIn().getHeader(sourceLocation, String.class);
+    }
+  }
+
+  static void putClaims(final JwtEndpoint endpoint, final Exchange exchange, final String claims) {
+    final String targetLocation = endpoint.getTarget();
+
+    if (targetLocation == null) {
+      exchange.getIn().setBody(claims);
+    } else if (targetLocation.startsWith("%")) {
+      exchange.setProperty(targetLocation.substring(1), claims);
+    } else {
+      exchange.getIn().setHeader(targetLocation, claims);
+    }
+  }
+
+  // TODO refactor with JwtCreateProcessor
+  static void removeSource(final String sourceLocation, final Exchange exchange) {
+    if (sourceLocation.startsWith("~")) {
+      exchange.removeProperty(sourceLocation.substring(1));
+    } else {
+      exchange.getIn().removeHeader(sourceLocation);
+    }
+  }
 }
