@@ -48,7 +48,7 @@ public class Util {
     }
   }
 
-  static void putClaims(final JwtEndpoint endpoint, final Exchange exchange, final String claims) {
+  static void putResult(final JwtEndpoint endpoint, final Exchange exchange, final String claims) {
     final String targetLocation = endpoint.getTarget();
 
     if (targetLocation == null) {
@@ -59,7 +59,7 @@ public class Util {
       exchange.getIn().setHeader(targetLocation, claims);
     }
   }
-  
+
   static void removeSource(final String sourceLocation, final Exchange exchange) {
     if (sourceLocation.startsWith("~")) {
       exchange.removeProperty(sourceLocation.substring(1));

@@ -29,7 +29,7 @@ public class JwtDecodeProcessor implements Processor {
 
     final JwtConsumer jwtConsumer = jwtConsumerBuilder.build();
 
-    Util.putClaims(endpoint, exchange, jwtConsumer.processToClaims(token).toJson());
+    Util.putResult(endpoint, exchange, jwtConsumer.processToClaims(token).toJson());
 
     if (endpoint.getSource() != null && !endpoint.isRetainSource()) {
       Util.removeSource(endpoint.getSource(), exchange);
