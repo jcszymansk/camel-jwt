@@ -229,6 +229,22 @@ public class JwtNoneTest extends JwtTestBase {
   }
 
   @Test
+  public void testNoneDecodePartOfHeader() throws Exception {
+    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&source=Authorization&target=.JwtClaims";
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setHeader("Authorization", "Bearer " + signedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+    });
+
+    final Map<String, Object> signedMap =
+        new ObjectMapper().readValue(result.getProperty("JwtClaims", String.class), Map.class);
+
+    Assertions.assertEquals(unsignedMap, signedMap);
+
+  }
+
+  @Test
   public void testNoRetainWithoutExplicitSource() throws Exception {
     final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&retainSource=true";
 
