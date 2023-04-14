@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
+import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -242,6 +243,30 @@ public class JwtNoneTest extends JwtTestBase {
 
     Assertions.assertEquals(unsignedMap, signedMap);
 
+  }
+
+  @Test
+  public void testNoneRefusePartOfHeader() throws Exception {
+    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&source=Authorization&target=.JwtClaims&decodeFindToken=false";
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setHeader("Authorization", "Bearer " + signedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+    });
+
+    Assertions.assertNotNull(result.getProperty(Exchange.EXCEPTION_CAUGHT, InvalidJwtException.class));
+  }
+
+  @Test
+  public void testFindOnlySingleToken() throws Exception {
+    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&source=Authorization&target=.JwtClaims";
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setHeader("Authorization", "Bearer " + signedBody + " SomethingElse XXX" + signedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+    });
+
+    Assertions.assertNotNull(result.getProperty(Exchange.EXCEPTION_CAUGHT, IllegalArgumentException.class));
   }
 
   @Test
