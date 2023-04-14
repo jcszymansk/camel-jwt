@@ -4,11 +4,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
+import org.jose4j.base64url.Base64;
 import org.jose4j.keys.HmacKey;
 
 import java.io.IOException;
 import java.security.Key;
-import java.util.Base64;
 
 public class Util {
   public static Key resolveKey(final JwtEndpoint endpoint, final Exchange exchange) throws IOException {
@@ -31,7 +31,7 @@ public class Util {
     final String keyBase64 =
         IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(ctx, privateKeyLocation));
 
-    final byte[] keyBytes = Base64.getDecoder().decode(keyBase64);
+    final byte[] keyBytes = Base64.decode(keyBase64);
 
     return new HmacKey(keyBytes);
   }
