@@ -27,6 +27,10 @@ public class Util {
       return null;
     }
 
+    if (!isValidUri(privateKeyLocation)) {
+      throw new IllegalArgumentException("Invalid key location provided (must be a local resource)");
+    }
+
     // TODO: cache the key
     final String keyBase64 =
         IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(ctx, privateKeyLocation));
