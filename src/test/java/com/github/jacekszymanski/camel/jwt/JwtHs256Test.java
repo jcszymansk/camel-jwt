@@ -13,11 +13,11 @@ import java.util.Collections;
 import java.util.Map;
 
 public class JwtHs256Test extends JwtTestBase {
-  private static final String SIGNED_HS256 = "classpath:signed.hs256.txt";
+  static final String SIGNED_HS256 = "classpath:signed.hs256.txt";
   private static final String SIGNED_WRONG_HS256 = "classpath:signed-wrong.hs256.txt";
-  private static final String KEY_HS256 = "classpath:key.hs256.txt";
+  static final String KEY_HS256 = "classpath:key.hs256.txt";
 
-  private String signedBody;
+  protected String signedBody;
 
   @BeforeEach
   public void setUp() throws Exception {
