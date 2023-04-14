@@ -7,6 +7,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.jose4j.jwt.consumer.InvalidJwtSignatureException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import java.util.Map;
 public class JwtHs256Test extends CamelTestSupport {
   private static final String UNSIGNED = "classpath:unsigned.txt";
   private static final String SIGNED_HS256 = "classpath:signed.hs256.txt";
+  private static final String SIGNED_WRONG_HS256 = "classpath:signed-wrong.hs256.txt";
   private static final String KEY_HS256 = "classpath:key.hs256.txt";
 
   private String unsignedBody;
@@ -61,6 +63,19 @@ public class JwtHs256Test extends CamelTestSupport {
         new ObjectMapper().readValue(result.getIn().getBody(String.class), Map.class);
 
     Assertions.assertEquals(unsignedMap, signedMap);
+  }
+
+  @Test
+  public void testHs256DecodeWrongSig() throws Exception {
+    final String JWT_URI = "jwt:HS256:Decode?privateKeyLocation=" + KEY_HS256;
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setBody(
+          IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_WRONG_HS256)));
+      exchange.setProperty("JWT_URI", JWT_URI);
+    });
+
+    Assertions.assertNotNull(result.getProperty(Exchange.EXCEPTION_CAUGHT, InvalidJwtSignatureException.class));
   }
 
   // TODO refactor with JwtNoneTest
