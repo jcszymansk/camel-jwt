@@ -1,7 +1,6 @@
 package com.github.jacekszymanski.camel.jwt;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.jose4j.jwa.AlgorithmConstraints;
@@ -20,7 +19,7 @@ public class JwtDecodeProcessor implements Processor {
     final JwtAlgorithm algorithm = endpoint.getAlgorithm();
 
     final JwtConsumerBuilder jwtConsumerBuilder = new JwtConsumerBuilder()
-        .setVerificationKey(KeyUtil.resolveKey(endpoint, exchange))
+        .setVerificationKey(Util.resolveKey(endpoint, exchange))
         .setJwsAlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT, algorithm.getIdentifier())
         ;
 

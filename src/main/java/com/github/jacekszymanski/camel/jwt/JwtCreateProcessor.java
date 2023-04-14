@@ -8,8 +8,6 @@ import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 public class JwtCreateProcessor implements Processor {
 
@@ -27,7 +25,7 @@ public class JwtCreateProcessor implements Processor {
     }
     signature.setHeader("typ", "JWT");
     signature.setPayload(claims.toJson());
-    signature.setKey(KeyUtil.resolveKey(endpoint, exchange));
+    signature.setKey(Util.resolveKey(endpoint, exchange));
 
     putToken(endpoint, exchange, signature.getCompactSerialization());
 

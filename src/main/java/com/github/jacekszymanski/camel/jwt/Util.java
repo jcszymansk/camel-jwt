@@ -6,13 +6,11 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.jose4j.keys.HmacKey;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.Key;
 import java.util.Base64;
 
-public class KeyUtil {
+public class Util {
   public static Key resolveKey(final JwtEndpoint endpoint, final Exchange exchange) throws IOException {
     final CamelContext ctx = endpoint.getCamelContext();
 
