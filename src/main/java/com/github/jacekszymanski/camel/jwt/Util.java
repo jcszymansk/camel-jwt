@@ -52,7 +52,7 @@ public class Util {
     }
   }
 
-  static void putResult(final JwtEndpoint endpoint, final Exchange exchange, final String claims) {
+  static void putResult(final JwtEndpoint endpoint, final Exchange exchange, final Object claims) {
     final String targetLocation = endpoint.getTarget();
 
     if (targetLocation == null) {

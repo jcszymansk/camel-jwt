@@ -1,5 +1,6 @@
 package com.github.jacekszymanski.camel.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -7,6 +8,7 @@ import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +40,16 @@ public class JwtDecodeProcessor implements Processor {
 
     final JwtConsumer jwtConsumer = jwtConsumerBuilder.build();
 
-    Util.putResult(endpoint, exchange, jwtConsumer.processToClaims(token).toJson());
+    String claimsAsJsonString = jwtConsumer.processToClaims(token).toJson();
+
+    if (endpoint.getOutputType() == JwtOutputType.Map) {
+      @SuppressWarnings("unchecked")
+      final Map<String, Object> claimsAsMap = new ObjectMapper().readValue(claimsAsJsonString, Map.class);
+      Util.putResult(endpoint, exchange, claimsAsMap);
+    }
+    else {
+      Util.putResult(endpoint, exchange, claimsAsJsonString);
+    }
 
     if (endpoint.getSource() != null && !endpoint.isRetainSource()) {
       Util.removeSource(endpoint.getSource(), exchange);

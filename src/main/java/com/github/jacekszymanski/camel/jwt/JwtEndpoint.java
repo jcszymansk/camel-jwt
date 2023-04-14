@@ -69,6 +69,12 @@ public class JwtEndpoint extends DefaultEndpoint {
   @Getter @Setter
   private boolean decodeFindToken = true;
 
+  @UriParam(defaultValue = "String",
+      description = "The type of the output. Can be String or Map.\n" +
+          "This option is only used when the operation is set to decode.\n")
+  @Getter @Setter
+  private JwtOutputType outputType = JwtOutputType.String;
+
   public JwtEndpoint() {
   }
 
