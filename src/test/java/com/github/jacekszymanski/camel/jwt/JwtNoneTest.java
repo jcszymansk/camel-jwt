@@ -289,4 +289,19 @@ public class JwtNoneTest extends JwtTestBase {
     Assertions.assertNotNull(result.getException(IllegalArgumentException.class));
   }
 
+  @Test
+  public void testNoneDecodeToMap() throws Exception {
+    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&outputType=Map";
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setBody(signedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+    });
+
+    final Map<String, Object> signedMap = result.getIn().getBody(Map.class);
+
+    Assertions.assertEquals(unsignedMap, signedMap);
+  }
+
+
 }
