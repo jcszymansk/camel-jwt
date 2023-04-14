@@ -36,7 +36,7 @@ public class Util {
     return new HmacKey(keyBytes);
   }
 
-  static String getToken(final JwtEndpoint endpoint, final Exchange exchange) {
+  static String getInput(final JwtEndpoint endpoint, final Exchange exchange) {
     final String sourceLocation = endpoint.getSource();
 
     if (sourceLocation == null) {

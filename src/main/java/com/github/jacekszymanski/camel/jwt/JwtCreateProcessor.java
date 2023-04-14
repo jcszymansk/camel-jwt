@@ -41,15 +41,7 @@ public class JwtCreateProcessor implements Processor {
   private static JwtClaims getClaims(final JwtEndpoint endpoint, final Exchange exchange) throws InvalidJwtException {
     final String sourceLocation = endpoint.getSource();
 
-    final String claims;
-
-    if (sourceLocation == null) {
-      claims = exchange.getIn().getBody(String.class);
-    } else if (sourceLocation.startsWith("%")) {
-      claims = exchange.getProperty(sourceLocation.substring(1), String.class);
-    } else {
-      claims = exchange.getIn().getHeader(sourceLocation, String.class);
-    }
+    final String claims = Util.getInput(endpoint, exchange);
 
     if (claims == null) {
       throw new IllegalArgumentException("No claims provided");

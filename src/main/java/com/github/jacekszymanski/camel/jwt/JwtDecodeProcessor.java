@@ -14,7 +14,7 @@ public class JwtDecodeProcessor implements Processor {
 
   @Override
   public void process(Exchange exchange) throws Exception {
-    final String token = Util.getToken(endpoint, exchange);
+    final String token = Util.getInput(endpoint, exchange);
 
     final JwtAlgorithm algorithm = endpoint.getAlgorithm();
 
