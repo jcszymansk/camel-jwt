@@ -139,3 +139,4 @@ target/
 .classpath
 .factorypath
 .project
+src/generated/
