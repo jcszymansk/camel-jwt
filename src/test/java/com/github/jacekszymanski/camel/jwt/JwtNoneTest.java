@@ -238,6 +238,18 @@ public class JwtNoneTest extends CamelTestSupport {
     mockResult.assertIsSatisfied();
   }
 
+  @Test
+  public void testNoRetainWithoutExplicitSource() throws Exception {
+    final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&retainSource=true";
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setHeader("JwtToken", signedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+    });
+
+    Assertions.assertNotNull(result.getException(IllegalArgumentException.class));
+  }
+
   @Override
   protected RouteBuilder createRouteBuilder() throws Exception {
     return new RouteBuilder() {
