@@ -59,8 +59,7 @@ public class Util {
       exchange.getIn().setHeader(targetLocation, claims);
     }
   }
-
-  // TODO refactor with JwtCreateProcessor
+  
   static void removeSource(final String sourceLocation, final Exchange exchange) {
     if (sourceLocation.startsWith("~")) {
       exchange.removeProperty(sourceLocation.substring(1));

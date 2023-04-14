@@ -33,7 +33,7 @@ public class JwtCreateProcessor implements Processor {
     // it is still available for debugging
     final String sourceLocation = endpoint.getSource();
     if (sourceLocation != null && !endpoint.isRetainSource()) {
-      removeSource(sourceLocation, exchange);
+      Util.removeSource(sourceLocation, exchange);
     }
 
   }
@@ -68,14 +68,6 @@ public class JwtCreateProcessor implements Processor {
     }
 
     return JwtClaims.parse(claims);
-  }
-
-  private static void removeSource(final String sourceLocation, final Exchange exchange) {
-    if (sourceLocation.startsWith("%")) {
-      exchange.removeProperty(sourceLocation.substring(1));
-    } else {
-      exchange.getIn().removeHeader(sourceLocation);
-    }
   }
 
 }
