@@ -29,6 +29,7 @@ public class JwtKeyInComponentTest extends JwtTestBase {
   public void testHs256Sign() throws Exception {
     final String JWT_URI = "jwt:HS256:Create";
 
+    mockResult.expectedMessageCount(1);
     mockResult.expectedBodiesReceived(signedBody);
 
     template.send("direct://test", exchange -> {

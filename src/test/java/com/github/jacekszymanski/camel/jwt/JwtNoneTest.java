@@ -27,6 +27,7 @@ public class JwtNoneTest extends JwtTestBase {
   public void testNoneSign() throws Exception {
     final String JWT_URI = "jwt:none:Create?reallyWantNone=true";
 
+    mockResult.expectedMessageCount(1);
     mockResult.expectedBodiesReceived(signedBody);
 
     template.send("direct://test", exchange -> {
@@ -41,6 +42,7 @@ public class JwtNoneTest extends JwtTestBase {
   public void testNoneSignFromHeader() throws Exception {
     final String JWT_URI = "jwt:none:Create?reallyWantNone=true&source=JwtClaims";
 
+    mockResult.expectedMessageCount(1);
     mockResult.expectedBodiesReceived(signedBody);
 
     template.send("direct://test", exchange -> {
@@ -55,6 +57,7 @@ public class JwtNoneTest extends JwtTestBase {
   public void testNoneSignFromProperty() throws Exception {
     final String JWT_URI = "jwt:none:Create?reallyWantNone=true&source=.JwtClaims";
 
+    mockResult.expectedMessageCount(1);
     mockResult.expectedBodiesReceived(signedBody);
 
     template.send("direct://test", exchange -> {
@@ -69,6 +72,7 @@ public class JwtNoneTest extends JwtTestBase {
   public void testNoneSignToHeader() throws Exception {
     final String JWT_URI = "jwt:none:Create?reallyWantNone=true&target=JwtToken";
 
+    mockResult.expectedMessageCount(1);
     mockResult.expectedHeaderReceived("JwtToken", signedBody);
 
     template.send("direct://test", exchange -> {
@@ -83,6 +87,7 @@ public class JwtNoneTest extends JwtTestBase {
   public void testNoneSignToProperty() throws Exception {
     final String JWT_URI = "jwt:none:Create?reallyWantNone=true&target=.JwtToken";
 
+    mockResult.expectedMessageCount(1);
     mockResult.expectedPropertyReceived("JwtToken", signedBody);
 
     template.send("direct://test", exchange -> {
@@ -99,6 +104,7 @@ public class JwtNoneTest extends JwtTestBase {
   public void testNoneSignClearHeader() throws Exception {
     final String JWT_URI = "jwt:none:Create?reallyWantNone=true&source=JwtClaims";
 
+    mockResult.expectedMessageCount(1);
     mockResult.expectedHeaderReceived("JwtClaims", null);
 
     template.send("direct://test", exchange -> {
@@ -114,6 +120,7 @@ public class JwtNoneTest extends JwtTestBase {
   public void testNoneSignRetainSourceHeader() throws Exception {
     final String JWT_URI = "jwt:none:Create?reallyWantNone=true&source=JwtClaims&retainSource=true";
 
+    mockResult.expectedMessageCount(1);
     mockResult.expectedHeaderReceived("JwtClaims", unsignedBody);
 
     template.send("direct://test", exchange -> {
@@ -204,6 +211,7 @@ public class JwtNoneTest extends JwtTestBase {
   public void testNoneDecodeClearHeader() throws Exception {
     final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&source=JwtToken";
 
+    mockResult.expectedMessageCount(1);
     mockResult.expectedHeaderReceived("JwtToken", null);
 
     template.send("direct://test", exchange -> {
@@ -214,11 +222,11 @@ public class JwtNoneTest extends JwtTestBase {
     mockResult.assertIsSatisfied();
   }
 
-  // FIXME check for message count everywhere!
   @Test
   public void testNodeDecodeRetainSourceHeader() throws Exception {
     final String JWT_URI = "jwt:none:Decode?reallyWantNone=true&source=JwtToken&retainSource=true";
 
+    mockResult.expectedMessageCount(1);
     mockResult.expectedHeaderReceived("JwtToken", signedBody);
 
     template.send("direct://test", exchange -> {
