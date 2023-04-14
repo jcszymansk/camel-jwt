@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.github.jacekszymanski.camel.jwt.JwtHs256Test.SIGNED_HS256;
-
 public class JwtRawKeyInComponentTest extends JwtTestBase {
 
   private String signedBody;
