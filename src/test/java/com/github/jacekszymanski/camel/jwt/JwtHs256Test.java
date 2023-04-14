@@ -1,11 +1,13 @@
 package com.github.jacekszymanski.camel.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -44,6 +46,21 @@ public class JwtHs256Test extends CamelTestSupport {
     });
 
     mockResult.assertIsSatisfied();
+  }
+
+  @Test
+  public void testHs256Decode() throws Exception {
+    final String JWT_URI = "jwt:HS256:Decode?privateKeyLocation=" + KEY_HS256;
+
+    final Exchange result = template.send("direct://test", exchange -> {
+      exchange.getIn().setBody(signedBody);
+      exchange.setProperty("JWT_URI", JWT_URI);
+    });
+
+    final Map<String, Object> signedMap =
+        new ObjectMapper().readValue(result.getIn().getBody(String.class), Map.class);
+
+    Assertions.assertEquals(unsignedMap, signedMap);
   }
 
   // TODO refactor with JwtNoneTest
