@@ -14,7 +14,7 @@ import org.apache.camel.support.DefaultComponent;
 public class JwtComponent extends DefaultComponent {
 
   @Metadata(description = "The location of the private key file")
-  @Getter @Setter
+  @Getter
   private String privateKeyLocation;
 
   protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -32,5 +32,12 @@ public class JwtComponent extends DefaultComponent {
     endpoint.setOperation(JwtOperation.valueOf(parts[1]));
     setProperties(endpoint, parameters);
     return endpoint;
+  }
+
+  public void setPrivateKeyLocation(String privateKeyLocation) {
+    if (!Util.isValidUri(privateKeyLocation)) {
+      throw new IllegalArgumentException("Invalid key location provided (must be a local resource)");
+    }
+    this.privateKeyLocation = privateKeyLocation;
   }
 }
