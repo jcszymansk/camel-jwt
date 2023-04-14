@@ -62,6 +62,13 @@ public class JwtEndpoint extends DefaultEndpoint {
   @Getter @Setter
   private boolean retainSource = false;
 
+  @UriParam(defaultValue = "true",
+      description = "If set to true, the processor will try to find, by a regexp match a JWT token in the " +
+          "source. If set to false, it will try to decode the entire source as a JWT token.\n" +
+          "This option is only used when the operation is set to decode.\n")
+  @Getter @Setter
+  private boolean decodeFindToken = true;
+
   public JwtEndpoint() {
   }
 
