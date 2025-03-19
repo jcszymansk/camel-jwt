@@ -20,8 +20,8 @@ public class JwtHs256Test extends JwtTestBase {
   protected String signedBody;
 
   @BeforeEach
-  public void setUp() throws Exception {
-    super.setUp();
+  public void setUpX() throws Exception {
+    super.setUpX();
     signedBody =
         IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_HS256)).trim();
     unsignedMap = Collections.unmodifiableMap(new ObjectMapper().readValue(unsignedBody, Map.class));

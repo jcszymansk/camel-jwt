@@ -17,8 +17,8 @@ public class JwtNoneTest extends JwtTestBase {
   private String signedBody;
 
   @BeforeEach
-  public void setUp() throws Exception {
-    super.setUp();
+  public void setUpX() throws Exception {
+    super.setUpX();
     signedBody =
         IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, SIGNED_NONE)).trim();
   }

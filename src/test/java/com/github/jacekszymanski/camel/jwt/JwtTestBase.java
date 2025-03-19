@@ -20,7 +20,7 @@ public class JwtTestBase extends CamelTestSupport {
   protected MockEndpoint mockResult;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  public void setUpX() throws Exception {
     super.setUp();
     unsignedBody = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(context, UNSIGNED));
     unsignedMap = Collections.unmodifiableMap(new ObjectMapper().readValue(unsignedBody, Map.class));

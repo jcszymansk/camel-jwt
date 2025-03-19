@@ -12,8 +12,8 @@ public class JwtRawKeyInComponentTest extends JwtTestBase {
 
   @Override
   @BeforeEach
-  public void setUp() throws Exception {
-    super.setUp();
+  public void setUpX() throws Exception {
+    super.setUpX();
   }
 
   @Test
